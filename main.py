@@ -1,8 +1,9 @@
 import argparse
 import logging
-from os import listdir, mkdir, path
+from os import listdir, mkdir, path, getenv
 from os.path import isfile, join
-from utils import docling, markitdown, performance
+from utils import docling, markitdown, google, performance
+from dotenv import load_dotenv
 
 logger = logging.getLogger(__name__)
 
@@ -26,8 +27,12 @@ def process(input_dir, output_dir, lib):
 def main():
     # Load all the args
     parser = argparse.ArgumentParser(description="Measure performance between docling and google enterprise ocr")
-    parser.add_argument("--input_dir", help="Input directory", default="docs")
-    parser.add_argument("--output_dir", help="Ouput directory", default="output")
+    parser.add_argument("--input_dir", help="Input directory", default=getenv("INPUT_DIR"))
+    parser.add_argument("--output_dir", help="Ouput directory", default=getenv("OUTPUT_DIR"))
+    parser.add_argument("--project_id", help="Ouput directory", default=getenv("PROJECT_ID"))
+    parser.add_argument("--processor_id", help="Ouput directory", default=getenv("PROCESSOR_ID"))
+    parser.add_argument("--location", help="Ouput directory", default=getenv("LOCATION"))
+
     args = parser.parse_args()
 
     input_dir = args.input_dir
@@ -35,6 +40,11 @@ def main():
 
     process(input_dir, output_dir, docling)
     process(input_dir, output_dir, markitdown)
+
+    google.PROJECT_ID = args.project_id
+    google.PROCESSOR_ID = args.processor_id
+    google.LOCATION = args.location
+    process(input_dir, output_dir, google)
 
     performance.get_metrics()
    
