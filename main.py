@@ -6,7 +6,6 @@ from utils import docling, markitdown, performance
 
 logger = logging.getLogger(__name__)
 
-@performance.execution_time
 def process(input_dir, output_dir, lib):
     for f in listdir(input_dir):
         abs_path = join(input_dir, f)
@@ -36,6 +35,8 @@ def main():
 
     process(input_dir, output_dir, docling)
     process(input_dir, output_dir, markitdown)
+
+    performance.get_metrics()
    
 
 if __name__ == "__main__":
